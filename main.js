@@ -166,22 +166,41 @@ Game.registerMod("Auto CCS",{
         }
     },
     santaMath:function(id){
-        price = Game.UpgradesById[id].price
+        price = Game.UpgradesById[id].price;
         if(id == 152){
             return 1; // same as dragon egg just buy it
         }
         else if(id in [153,154]){
             TotalCps = Game.buildingCps;
-            boost = TotalCps * .15
-            return TotalCps/price
+            boost = TotalCps * .15;
+            return TotalCps/price;
         }
         else if(id in [155,156]){
             TotalCps = Game.buildingCps;
-            boost = TotalCps * .01
-            return TotalCps/price
+            boost = TotalCps * .01;
+            return TotalCps/price;
+        }
+        else if(id == 160){
+            return (Game.buildingCps * .01)/price;
         }
         else if(id == 162){
             return Game.building.Grandma.totalCps * 2/price;
+        }
+        else if (id == 164){
+            boost = this.clickCps() * 0.1;
+            return boost/price;
+        }
+        else if(id == 165){
+            currentlevel = Game.santaLevel;
+            boost = (currentlevel * 0.03) * Game.buildingCps;
+            return boost/price;
+        }
+        else if(id == 168){
+            boost = Game.buildingCps * 0.21;
+            return boost/price;
+        }
+        else{
+            return 0;
         }
     },
     HevanlyChips:function(id){
@@ -215,6 +234,8 @@ Game.registerMod("Auto CCS",{
                 return this.dragonUpgrades(id);
             case "hc": // hevanly chips
                 return this.HevanlyChips(id);
+            case "st": // Santa upgrades
+                return this.santaMath(id);
             default:
                 break;
         }
