@@ -4,16 +4,18 @@ Game.registerMod("Auto CCS",{
         Game.Notify(`CCS loaded!`,'',[16,5]);
         let MOD = this;
         Game.starter = false
+        MOD.MODButtonName = "Start automation"
         Game.Switcher = function(){
-            if (Game.starter == false) {
-                Game.starter = true
-            } else {
-                Game.starter = false
-            }
+            Game.starter = !Game.starter;
+            MOD.MODButtonName = MOD.GetMODButtonName();
+            MOD.buttonMenuChange();
+            console.log(MOD.MODButtonName);
         }
+        MOD.newthing = true
         MOD.defaultInfo = Game.updateLog;
         MOD.Bestbuilding = "Grandma";
-        MOD.infoWrite();
+        MOD.BestUpgradeName = "Unkown"
+        MOD.infoWrite(true);
         MOD.tfboost = 0.0;
         MOD.buildingsScore = 0.0;
         MOD.UpgradeScore = 0.0;
@@ -25,15 +27,13 @@ Game.registerMod("Auto CCS",{
             if (Game.starter == true) {
                 MOD.mainLoop();
             }
-
-        }); ;
+        });
     },
     mainLoop:function(){
-        this.infoCheck();
-        this.infoWrite();
         this.clicker();
         this.buildingPicker();
         this.upgradepicker();
+        this.infoWrite();
         this.GCLogic();
     },
     clicker:function(){
@@ -51,9 +51,11 @@ Game.registerMod("Auto CCS",{
 
             }
         }
-        if (Game.cookies > this.getPrice(this.Bestbuilding)){
-            Game.Objects[`${this.Bestbuilding}`].buy(1);
 
+        if (Game.cookies > this.getPrice(this.Bestbuilding)){
+            Game.Objects[`${this.Bestbuilding}`].buy();
+            this.newthing = true
+            this.buildingPicker(); //this is to make sure the info menu is accurate
         }
     },
     upgradepicker:function(){
@@ -63,7 +65,8 @@ Game.registerMod("Auto CCS",{
             if(this.calculateGains(this.upgradetypes[storeObj.id],storeObj.id) >= score) {
                 score = this.calculateGains(this.upgradetypes[storeObj.id],storeObj.id);
                 this.BestUpgrades = storeObj.id;
-                this.UpgradeScore = score
+                this.UpgradeScore = score;
+                this.BestUpgradeName = storeObj.name;
             }
         }
         if (this.BestUpgrades != undefined) {
@@ -75,6 +78,8 @@ Game.registerMod("Auto CCS",{
                 else{
                     Game.UpgradesById[this.BestUpgrades].buy();
                 }
+                this.upgradepicker();
+                this.newthing = true;
             }
         }
     },
@@ -287,27 +292,51 @@ Game.registerMod("Auto CCS",{
         })
     },
     // wow GC hard
-    infoCheck:function(){
-        if (Game.onMenu == "log") {
-            this.startButton = l('rows').insertAdjacentHTML('afterbegin','<div> <a style="font-size:12px;position:absolute;top:2px;right:2px;display:block;visibility:visible;" class="smallFancyButton" id="storeClicker">Start automation</a></div>');
-        }
-        else {
-            this.startButton = l('rows').insertAdjacentHTML('afterbegin','<div> <a style="font-size:12px;position:absolute;top:2px;right:2px;display:block;visibility: hidden;" class="smallFancyButton" id="storeClicker">Start automation</a></div>');
-        }
-    },
-    infoWrite:function(){
+    infoWrite:function(menu){
         Game.updateLog = `
         <div class="selectable"
             <div class="section">
                 <div class="title">AUTO-CCS info  
                     <div class='listing'> 
-                        best building: ${this.Bestbuilding} score: ${this.buildingsScore}
+                        Best Building: ${this.Bestbuilding}: Score: ${this.buildingsScore}
                     </div>
                     <div class='listing'>
-                        best upgrades here
+                        Best Upgrade ${this.BestUpgradeName}: Score: ${this.UpgradeScore}
                     </div>
                     <div class='listing' id='buttonZone'>
-                        <a class='smallFancyButton' onclick='Game.Switcher();'> testing </a>
+                        <a class='smallFancyButton' onclick='Game.Switcher();'> ${this.MODButtonName} </a>
+                    </div>
+                </div>
+            </div>
+        </div>` + this.defaultInfo;
+        if (menu === undefined){
+            if (this.newthing){
+                Game.UpdateMenu(); // was causing preformance issues so we arent going to run it every frame
+                this.newthing = !this.newthing
+            }
+        }
+    },
+    GetMODButtonName:function(){
+        console.log(Game.starter);
+        if (Game.starter) {
+            return Game.MODButtonName = "Stop automation";
+         } else {
+            return Game.MODButtonName = "Start automation";          
+         }
+    },
+    buttonMenuChange:function(){
+        Game.updateLog = `
+        <div class="selectable"
+            <div class="section">
+                <div class="title">AUTO-CCS info  
+                    <div class='listing'> 
+                        Best Building: ${this.Bestbuilding}: Score: ${this.buildingsScore}
+                    </div>
+                    <div class='listing'>
+                        Best Upgrade ${this.BestUpgradeName}: Score: ${this.UpgradeScore}
+                    </div>
+                    <div class='listing' id='buttonZone'>
+                        <a class='smallFancyButton' onclick='Game.Switcher();'> ${this.MODButtonName} </a>
                     </div>
                 </div>
             </div>
