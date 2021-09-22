@@ -1,13 +1,20 @@
 # CCS-bot
-A cookie clicker bot that plays Cookie clicker  
-Current Feautres:  
+Same as my old CC bot but works on steam
+## Current features
+* Atuo clicks cookie
+* Auto clicks Golden Cookies
+* Buys best upgrades and buildings
+
+## Planed features
+* Stock market
+* Garden automation
+* grimoire autmoation **UNLIKLEY**
+
+___
   
-  Auto clicks big cookie
-  Buys upgrades and buildings  
-  Has an info tab in the CC info menu 
-  Auto clicks Golden Cookies  
-  
-Planed features:  
-  Automated Garden  
-  Automated Stock market  
-  Very unlikley but grimoure automation  
+# Download instructions
+Download the project  as a ZIP folder  
+navigate to your steam folder
+
+`steamapps\common\Cookie Clicker\resources\app\mods\local`  
+extract and put the ZIP file in there
