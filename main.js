@@ -53,9 +53,18 @@ Game.registerMod("Auto CCS",{
         }
 
         if (Game.cookies > this.getPrice(this.Bestbuilding)){
-            Game.Objects[`${this.Bestbuilding}`].buy();
-            this.newthing = true
-            this.buildingPicker(); //this is to make sure the info menu is accurate
+            if (Game.buyMode == 1) {
+                Game.Objects[`${this.Bestbuilding}`].buy();
+                this.newthing = true
+                this.infoBuildingUdater();
+            }
+            else{
+                Game.buyMode = 1
+                Game.Objects[`${this.Bestbuilding}`].buy();
+                this.newthing = true
+                this.infoBuildingUdater();
+                Game.buyMode = -1
+            } //this is to make sure the info menu is accurate
         }
     },
     upgradepicker:function(){
@@ -78,8 +87,31 @@ Game.registerMod("Auto CCS",{
                 else{
                     Game.UpgradesById[this.BestUpgrades].buy();
                 }
-                this.upgradepicker();
+                this.infoUPgradeUpdater();
                 this.newthing = true;
+            }
+        }
+    },
+    infoUPgradeUpdater:function(){
+        score = 0.0
+        for (let i = 0; i < Game.UpgradesInStore.length; i++) {
+            var storeObj = Game.UpgradesInStore[i];
+            if(this.calculateGains(this.upgradetypes[storeObj.id],storeObj.id) >= score) {
+                score = this.calculateGains(this.upgradetypes[storeObj.id],storeObj.id);
+                this.BestUpgrades = storeObj.id;
+                this.UpgradeScore = score;
+                this.BestUpgradeName = storeObj.name;
+            }
+        }
+    },
+    infoBuildingUdater:function(){
+        score = 0.0
+        for (Objects in Game.Objects) {
+            if (this.buildingMath(Objects) >= score) {
+                score = this.buildingMath(Objects);
+                this.Bestbuilding = Objects;
+                this.buildingsScore = score
+
             }
         }
     },
