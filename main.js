@@ -317,9 +317,9 @@ Game.registerMod("Auto CCS",{
     },
     // end of upgrade code on to GC code
     GCLogic:function(){
-        Game.shimmers.forEach(function(shimmer) {
-            if (shimmer.type == "golden") {
-                shimmer.pop();
+        Game.shimmers.forEach(function(shimmer){
+            if(shimmer.type == "golden" && shimmer.wrath == 0){
+                shimmer.pop()
             }
         })
     },
